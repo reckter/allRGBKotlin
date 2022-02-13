@@ -1,12 +1,11 @@
 package me.reckter.allRGB
 
-import picture.RandomColorDistributor
 
-fun main(args: Array<String>) {
+fun main() {
 
     // Try adding program arguments via Run/Debug configuration.
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    val gen = RandomColorDistributor("jungle.JPG")
+    val gen = Crystals()
     gen.render()
     gen.writePicture()
 }

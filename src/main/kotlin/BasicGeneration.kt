@@ -169,14 +169,18 @@ abstract class BasicGeneration {
 
     companion object {
         const val SIZE = 4096
-        const val CANVAS_SIZE = 1024
+        const val CANVAS_SIZE = 2048
+
         const val FACTOR = SIZE / CANVAS_SIZE
         const val COLORS = 256
+
         const val R = 0
         const val G = 1
         const val B = 2
+
         const val X = 0
         const val Y = 1
+
         var random: Random = Random()
     }
 }

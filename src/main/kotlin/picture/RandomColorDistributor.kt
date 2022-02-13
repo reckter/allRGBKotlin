@@ -1,4 +1,4 @@
-package picture
+package me.reckter.allRGB.picture
 
 import BasicPicture
 import me.tongfei.progressbar.InteractiveConsoleProgressBarConsumer
@@ -66,60 +66,65 @@ class RandomColorDistributor(file: String) : BasicPicture(file) {
             .chunked(size / threads)
             .asSequence()
 
+//        randomColors()
+//            .chunked(size / threads)
+//            .zip(positions)
+//            .mapIndexed { index, it -> it to index }
+//            .asStream()
+//            .unordered()
+//            .parallel()
+//            .forEach { (it, index) ->
+//                val (colors, positions) = it
+//                val allPositions = ConcurrentLinkedQueue(positions)
+//                println("$index started")
+//                colors
+//                    .parallelStream()
+//                    .let {
+//                        ProgressBar.wrap(
+//                            it,
+//                            ProgressBarBuilder()
+//                                .setTaskName("$index")
+//                                .showSpeed()
+//                        )
+//                    }
+//                    .forEach { color ->
+//                        val it = allPositions
+//                            .minByOrNull { (_, shouldColor) ->
+//                                distanceSquared(color, shouldColor)
+//                            } ?: error("no  candidate found $color")
+//                        val (x, y) = it.first
+//
+//                        allPositions.remove(it)
+//                        pixel[x][y][R] = color.first.toByte()
+//                        pixel[x][y][G] = color.second.toByte()
+//                        pixel[x][y][B] = color.third.toByte()
+//                    }
+//            }
+
         randomColors()
-            .chunked(size / threads)
-            .zip(positions)
-            .mapIndexed { index, it -> it to index }
             .asStream()
-            .unordered()
             .parallel()
-            .forEach { (it, index) ->
-                val (colors, positions) = it
-                val allPositions = LinkedList(positions)
-                println("$index started")
-                colors
                     .let {
                         ProgressBar.wrap(
                             it,
                             ProgressBarBuilder()
-                                .setTaskName("$index")
+                                .setTaskName("run")
                                 .showSpeed()
+                                .setInitialMax(SIZE * SIZE.toLong())
                         )
                     }
-                    .forEach { color ->
-                        val it = allPositions
-                            .minByOrNull { (_, shouldColor) ->
-                                distanceSquared(color, shouldColor)
-                            } ?: error("no  candidate found $color")
-                        val (x, y) = it.first
+            .forEach { color ->
+                val it = allPositions
+                    .minByOrNull { (_, shouldColor) ->
+                        distanceSquared( color, shouldColor )
+                    } ?: error("no  candidate found $color")
+                val (x,y) = it.first
 
-                        allPositions.remove(it)
-                        pixel[x][y][R] = color.first.toByte()
-                        pixel[x][y][G] = color.second.toByte()
-                        pixel[x][y][B] = color.third.toByte()
-                    }
+                allPositions.remove(it)
+                pixel[x][y][R] = color.first.toByte()
+                pixel[x][y][G] = color.second.toByte()
+                pixel[x][y][B] = color.third.toByte()
             }
-
-//        randomColors()
-//            .asStream()
-//            .parallel()
-//            .progressBar {
-//                unitSize = 1
-//                initialMax = SIZE * SIZE.toLong()
-//                showSpeed = true
-//            }
-//            .forEach { color ->
-//                val it = allPositions
-//                    .minByOrNull { (_, shouldColor) ->
-//                        distanceSquared( color, shouldColor )
-//                    } ?: error("no  candidate found $color")
-//                val (x,y) = it.first
-//
-//                allPositions.remove(it)
-//                pixel[x][y][R] = color.first.toByte()
-//                pixel[x][y][G] = color.second.toByte()
-//                pixel[x][y][B] = color.third.toByte()
-//            }
     }
 
     fun distance(first: Triple<Int, Int, Int>, second: Triple<Int, Int, Int>): Double {

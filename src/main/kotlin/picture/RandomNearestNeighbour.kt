@@ -1,7 +1,9 @@
-package picture
+package me.reckter.allRGB.picture
 
 import BasicPicture
-import dev.reimer.progressbar.ktx.progressBar
+import me.reckter.allRGB.cords.Cord3D
+import me.reckter.allRGB.cords.manhattenDistance
+import me.reckter.allRGB.cords.plus
 import java.lang.Integer.max
 import kotlin.streams.asStream
 
@@ -108,11 +110,6 @@ class RandomNearestNeighbour(file: String) : BasicPicture(file) {
         randomPositions()
             .asStream()
             .parallel()
-            .progressBar {
-                initialMax = SIZE * SIZE.toLong()
-                unitSize = 1
-                showSpeed = true
-            }
             .forEach { (x, y) ->
                 val shouldColor = pixelShould[x][y]
 
@@ -124,32 +121,4 @@ class RandomNearestNeighbour(file: String) : BasicPicture(file) {
 
             }
     }
-}
-
-data class Cord3D<T : Number>(
-    val x: T, val y: T, val z: T
-)
-
-operator fun Cord3D<Int>.plus(other: Cord3D<Int>): Cord3D<Int> {
-    return Cord3D(
-        this.x + other.x, this.y + other.y, this.z + other.z
-    )
-}
-
-fun Cord3D<Int>.getNeighbors(): List<Cord3D<Int>> {
-    return (-1..1).flatMap { xOffset ->
-        (-1..1).flatMap { yOffset ->
-            (-1..1).map { zOffset ->
-                this + Cord3D(xOffset, yOffset, zOffset)
-            }
-        }
-    }.filter { it != this }
-}
-
-fun Cord3D<Int>.manhattenDistance(to: Cord3D<Int>): Int {
-    return Math.abs(this.x - to.x) + Math.abs(this.y - to.y) + Math.abs(this.z - to.z)
-}
-
-fun Cord3D<Long>.manhattenDistance(to: Cord3D<Long>): Long {
-    return Math.abs(this.x - to.x) + Math.abs(this.y - to.y) + Math.abs(this.z - to.z)
 }
